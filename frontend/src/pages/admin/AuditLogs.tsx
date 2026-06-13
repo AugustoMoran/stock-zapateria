@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import { format } from 'date-fns';
 
 const AuditLogs: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);

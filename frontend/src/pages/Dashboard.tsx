@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Package, ShoppingCart, RefreshCcw, Undo2, TrendingUp, ChevronRight, Sparkles, Zap } from 'lucide-react';
+import { Package, ShoppingCart, RefreshCcw, Undo2, TrendingUp, ChevronRight, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {

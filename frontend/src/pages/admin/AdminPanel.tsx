@@ -88,9 +88,6 @@ const AdminPanel: React.FC = () => {
       {/* Tab bar */}
       <div className="flex items-center gap-1 overflow-x-auto pb-1">
         {tabs.map(tab => {
-          const active = tab.exact
-            ? location.pathname === tab.path
-            : location.pathname.startsWith(tab.path) && tab.path !== '/admin';
           const isExactAdmin = tab.exact && location.pathname === '/admin';
           const isActive = isExactAdmin || (!tab.exact && location.pathname.startsWith(tab.path));
           return (
