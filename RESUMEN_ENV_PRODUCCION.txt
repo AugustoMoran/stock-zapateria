@@ -1,0 +1,12 @@
+# COPIAR Y PEGAR EN RENDER (Environment Variables)
+# =================================================
+
+APP_USERNAME=zapateria
+APP_PASSWORD=zapateria123
+ADMIN_PASSWORD=admin123
+NODE_ENV=production
+PORT=10000
+MONGODB_URI=mongodb+srv://gastonzapateria_db_user:pAcBictZaLL36Zdu@cluster0.2uzmo3r.mongodb.net/stock-zapateria?appName=Cluster0
+JWT_SECRET=clave_secreta_para_tokens_acceso_2024
+JWT_REFRESH_SECRET=clave_secreta_para_tokens_refresh_2024
+CORS_ORIGINS=https://tu-app-en-vercel.vercel.app
