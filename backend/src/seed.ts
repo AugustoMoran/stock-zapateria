@@ -16,11 +16,19 @@ const seed = async () => {
     await Product.deleteMany({});
     await AdminSettings.deleteMany({});
 
+    if (process.argv.includes('--clear-only')) {
+      console.log('Base de datos limpiada por completo');
+      process.exit();
+    }
+
     // Create User
+    const envUsername = process.env.APP_USERNAME || 'usuario1';
+    const envPassword = process.env.APP_PASSWORD || 'user123';
+    
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash('user123', salt);
+    const hashedPassword = await bcrypt.hash(envPassword, salt);
     await User.create({
-      username: 'usuario1',
+      username: envUsername,
       password: hashedPassword
     });
 
