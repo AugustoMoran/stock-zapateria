@@ -65,12 +65,12 @@ class ExchangeService {
       },
       diferenciaPrecio: diferencia,
       diferenciaCosto: diferenciaCosto,
-      usuario: userId,
+      usuario: userId as any,
       fecha: new Date()
     });
 
     await AuditLog.create({
-      usuario: userId,
+      usuario: userId as any,
       accion: 'CAMBIO',
       detalles: `Cambio realizado ID: ${exchange._id}`
     });

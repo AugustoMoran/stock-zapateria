@@ -55,12 +55,12 @@ class SaleService {
       totalVenta,
       totalCosto,
       totalGanancia: totalVenta - totalCosto,
-      usuario: userId,
+      usuario: userId as any,
       fecha: new Date()
     });
 
     await AuditLog.create({
-      usuario: userId,
+      usuario: userId as any,
       accion: 'VENTA',
       detalles: `Venta realizada ID: ${sale._id}, Total: ${totalVenta}`
     });

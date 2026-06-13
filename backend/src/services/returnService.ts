@@ -32,12 +32,12 @@ class ReturnService {
       cantidad,
       montoDevuelto,
       costoUnitario: product.costo,
-      usuario: userId,
+      usuario: userId as any,
       fecha: new Date()
     });
 
     await AuditLog.create({
-      usuario: userId,
+      usuario: userId as any,
       accion: 'DEVOLUCION',
       detalles: `Devolución realizada ID: ${returnRecord._id}`
     });
