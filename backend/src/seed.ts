@@ -4,6 +4,11 @@ import dotenv from 'dotenv';
 import User from './models/User';
 import Product from './models/Product';
 import AdminSettings from './models/AdminSettings';
+import Sale from './models/Sale';
+import Return from './models/Return';
+import Exchange from './models/Exchange';
+import StockMovement from './models/StockMovement';
+import AuditLog from './models/AuditLog';
 
 dotenv.config();
 
@@ -11,13 +16,18 @@ const seed = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27014/stock-zapateria');
     
-    // Clear existing
+    // Clear existing - TODA LA BASE DE DATOS
     await User.deleteMany({});
     await Product.deleteMany({});
     await AdminSettings.deleteMany({});
+    await Sale.deleteMany({});
+    await Return.deleteMany({});
+    await Exchange.deleteMany({});
+    await StockMovement.deleteMany({});
+    await AuditLog.deleteMany({});
 
     if (process.argv.includes('--clear-only')) {
-      console.log('Base de datos limpiada por completo');
+      console.log('Base de datos limpiada por completo (Ventas, Cambios, Devoluciones, Logs y Productos)');
       process.exit();
     }
 
@@ -37,36 +47,6 @@ const seed = async () => {
     await AdminSettings.create({
       adminPasswordHash: hashedAdminPassword
     });
-
-    // Create Products
-    const products = [
-      {
-        fabrica: 'Nike',
-        articulo: 'Air Max',
-        color: 'Negro',
-        costo: 5000,
-        precioPublico: 12000,
-        stock: { '5': 10, '6': 5, '7': 12, '8': 8, '9': 4, '0': 6, '1': 2 }
-      },
-      {
-        fabrica: 'Adidas',
-        articulo: 'Superstar',
-        color: 'Blanco',
-        costo: 4500,
-        precioPublico: 11000,
-        stock: { '5': 8, '6': 10, '7': 15, '8': 5, '9': 3, '0': 4, '1': 1 }
-      },
-      {
-        fabrica: 'Puma',
-        articulo: 'Suede',
-        color: 'Azul',
-        costo: 4000,
-        precioPublico: 9500,
-        stock: { '5': 5, '6': 5, '7': 5, '8': 5, '9': 5, '0': 5, '1': 5 }
-      }
-    ];
-
-    await Product.insertMany(products);
 
     console.log('Seed data created successfully');
     process.exit();
