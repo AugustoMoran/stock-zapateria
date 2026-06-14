@@ -116,6 +116,7 @@ const Reports: React.FC = () => {
                 { label: 'Devoluciones', value: data.cantidadDevoluciones, icon: Undo2, color: 'text-red-400' },
                 { label: 'Cambios con Diferencia', value: `$${Number(data.exchangeRevenueDiff).toLocaleString()}`, icon: Package, color: 'text-violet-400' },
                 { label: 'Efectivo Devuelto', value: `$${Number(data.totalMontoDevuelto).toLocaleString()}`, icon: DollarSign, color: 'text-red-300' },
+                { label: 'Total Descuentos', value: `$${Number(data.totalDescuentos || 0).toLocaleString()}`, icon: TrendingUp, color: 'text-orange-400' },
               ].map(item => (
                 <div key={item.label} className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-white/40 text-sm">

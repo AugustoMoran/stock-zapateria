@@ -28,6 +28,12 @@ class AdminService {
     const grossSalesRevenue = sales.reduce((acc, sale) => acc + sale.totalVenta, 0);
     const exchangeRevenueDiff = exchanges.reduce((acc, ex) => acc + (ex.diferenciaPrecio || 0), 0);
     const totalMontoDevuelto = returns.reduce((acc, ret) => acc + ret.montoDevuelto, 0);
+    const totalDescuentos = sales.reduce((acc, sale) => {
+      if (sale.descuento) {
+        return acc + (sale.totalBruto! - sale.totalVenta);
+      }
+      return acc;
+    }, 0);
 
     const netRevenue = grossSalesRevenue + exchangeRevenueDiff - totalMontoDevuelto;
 
@@ -43,6 +49,7 @@ class AdminService {
       totalIngresos: netRevenue,
       totalCostos: netCost,
       totalMontoDevuelto,
+      totalDescuentos,
       exchangeRevenueDiff,
       netProfit,
       cantidadVentas: sales.length,

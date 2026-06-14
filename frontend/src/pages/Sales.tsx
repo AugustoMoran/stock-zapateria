@@ -10,6 +10,8 @@ const Sales: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [selectedTalle, setSelectedTalle] = useState('');
   const [cantidad, setCantidad] = useState(1);
+  const [discountType, setDiscountType] = useState<'PORCENTAJE' | 'MONTO'>('PORCENTAJE');
+  const [discountValue, setDiscountValue] = useState<string>('');
 
   useEffect(() => {
     const fetch = async () => {
@@ -45,15 +47,29 @@ const Sales: React.FC = () => {
 
   const confirmSale = async () => {
     try {
-      await api.post('/sales', { items: cart });
+      const payload: any = { items: cart };
+      if (Number(discountValue) > 0) {
+        payload.descuento = {
+          tipo: discountType,
+          valor: Number(discountValue)
+        };
+      }
+      await api.post('/sales', payload);
       toast.success('¡Venta confirmada!');
       setCart([]);
+      setDiscountValue('');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Error al procesar venta');
     }
   };
 
-  const total = cart.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+  const totalBruto = cart.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+  const discountAmount = Number(discountValue) > 0
+    ? (discountType === 'PORCENTAJE' 
+        ? totalBruto * (Number(discountValue) / 100) 
+        : Number(discountValue))
+    : 0;
+  const totalFinal = totalBruto - discountAmount;
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 animate-slide-up h-full">
@@ -183,9 +199,57 @@ const Sales: React.FC = () => {
           </div>
 
           <div className="border-t border-white/10 pt-4 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-white/50 font-medium">Total</span>
-              <span className="text-white font-black text-2xl">${total.toLocaleString()}</span>
+            {cart.length > 0 && (
+              <div className="bg-white/5 rounded-xl p-3 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-white/40 text-xs font-bold uppercase tracking-wider">Descuento</span>
+                  <div className="flex bg-black/20 rounded-lg p-0.5">
+                    <button 
+                      onClick={() => setDiscountType('PORCENTAJE')}
+                      className={`px-2 py-1 text-[10px] rounded-md transition-all ${discountType === 'PORCENTAJE' ? 'bg-violet-600 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                    >
+                      %
+                    </button>
+                    <button 
+                      onClick={() => setDiscountType('MONTO')}
+                      className={`px-2 py-1 text-[10px] rounded-md transition-all ${discountType === 'MONTO' ? 'bg-violet-600 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                    >
+                      $
+                    </button>
+                  </div>
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    placeholder={discountType === 'PORCENTAJE' ? "0%" : "$0"}
+                    className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-violet-500/50 transition-all font-bold"
+                    value={discountValue}
+                    onChange={e => setDiscountValue(e.target.value)}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-white/20">
+                    {discountType === 'PORCENTAJE' ? '%' : '$'}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              {discountAmount > 0 && (
+                <>
+                  <div className="flex items-center justify-between text-white/50 text-sm">
+                    <span>Subtotal</span>
+                    <span>${totalBruto.toLocaleString()}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-red-400 text-sm">
+                    <span>Descuento</span>
+                    <span>- ${discountAmount.toLocaleString()}</span>
+                  </div>
+                </>
+              )}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-white/50 font-medium text-lg">Total</span>
+                <span className="text-white font-black text-3xl">${totalFinal.toLocaleString()}</span>
+              </div>
             </div>
 
             <button

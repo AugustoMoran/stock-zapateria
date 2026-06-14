@@ -4,7 +4,8 @@ import saleService from '../services/saleService';
 export const createSale = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user._id;
-    const sale = await saleService.createSale(req.body.items, userId);
+    const { items, descuento } = req.body;
+    const sale = await saleService.createSale(items, userId, descuento);
     res.status(201).json(sale);
   } catch (error: any) {
     res.status(400).json({ message: error.message });

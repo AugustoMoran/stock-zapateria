@@ -4,8 +4,8 @@ import StockMovement, { MovementType } from '../models/StockMovement';
 import AuditLog from '../models/AuditLog';
 
 class SaleService {
-  async createSale(items: any[], userId: string) {
-    let totalVenta = 0;
+  async createSale(items: any[], userId: string, descuento?: { tipo: 'PORCENTAJE' | 'MONTO', valor: number }) {
+    let totalBruto = 0;
     let totalCosto = 0;
     const saleItems = [];
 
@@ -25,7 +25,7 @@ class SaleService {
       // Calculate financials
       const itemPrice = product.precioPublico * item.cantidad;
       const itemCost = product.costo * item.cantidad;
-      totalVenta += itemPrice;
+      totalBruto += itemPrice;
       totalCosto += itemCost;
 
       saleItems.push({
@@ -50,9 +50,20 @@ class SaleService {
       });
     }
 
+    let totalVenta = totalBruto;
+    if (descuento && descuento.valor > 0) {
+      if (descuento.tipo === 'PORCENTAJE') {
+        totalVenta = totalBruto - (totalBruto * (descuento.valor / 100));
+      } else {
+        totalVenta = totalBruto - descuento.valor;
+      }
+    }
+
     const sale = await saleRepository.create({
       items: saleItems,
       totalVenta,
+      totalBruto,
+      descuento,
       totalCosto,
       totalGanancia: totalVenta - totalCosto,
       usuario: userId as any,
@@ -62,7 +73,7 @@ class SaleService {
     await AuditLog.create({
       usuario: userId as any,
       accion: 'VENTA',
-      detalles: `Venta realizada ID: ${sale._id}, Total: ${totalVenta}`
+      detalles: `Venta realizada ID: ${sale._id}, Total: ${totalVenta}${descuento ? ` (Descuento: ${descuento.valor}${descuento.tipo === 'PORCENTAJE' ? '%' : '$'})` : ''}`
     });
 
     return sale;
